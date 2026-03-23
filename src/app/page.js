@@ -1,66 +1,59 @@
-import Image from "next/image";
 import styles from "./page.module.css";
+import Card from "../components/Card";
+import Filter from "../components/Filters";
+import Link from "next/link";
 
-export default function Home() {
+async function fetchTitles() {
+  const response = await fetch(
+    "https://web.ics.purdue.edu/~zong6/profile-app/get-titles.php",
+    {
+      next: { revalidate: 60 },
+    },
+  );
+  const titles = await response.json();
+  return titles ? titles.titles : [];
+}
+async function getData({ title, search }) {
+  const response = await fetch(
+    `https://web.ics.purdue.edu/~zong6/profile-app/fetch-data-with-filter.php?title=${title}&name=${search}&limit=1000`,
+    {
+      next: { revalidate: 60 },
+    },
+  );
+  const data = await response.json();
+  return data ? data.profiles : [];
+}
+export const metaData = {
+  title: "Profile App",
+  description: "A profile app built with Next.js",
+};
+export default async function Home({ searchParams }) {
+  const searchParamsData = await searchParams;
+  const selectedTitle = searchParamsData && searchParamsData.title ? searchParamsData.title : "";
+  const selectedSearch = searchParamsData && searchParamsData.search ? searchParamsData.search : "";
+  const [titles, profiles] = await Promise.all([
+    fetchTitles(),
+    getData({ title: selectedTitle, search: selectedSearch }),
+  ]);
+  console.log(titles);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div>
+        <h1>My Profiles App</h1>
+        <Filter titles={titles} title={selectedTitle} search={selectedSearch} />
+        <div className="grid">
+        {profiles && profiles.length > 0
+          ? profiles.map((profile) => (
+            <Link key={profile.id} href={`/profile/${profile.id}`}> 
+              <Card
+                name={profile.name}
+                title={profile.title}
+                image={profile.image_url}
+              />
+              </Link>
+            ))
+          : <p>No profiles found.</p>}
+          </div>
     </div>
   );
 }
