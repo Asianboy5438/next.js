@@ -4,12 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma migrate deploy && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
-    "next": "16.1.6",
+    "@prisma/client": "^6.12.0",
+    "next": "16.2.1",
+    "prisma": "^6.12.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
