@@ -4,9 +4,9 @@ let profiles = [
 ];
 
 export async function GET(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   //TODO: find the profile by id
-  //const profile = ;
+  const profile = profiles.find(profile => profile.id === parseInt(id));
 
   if (!profile) {
     return Response.json({ error: "Profile not found" }, { status: 404 });
@@ -15,22 +15,36 @@ export async function GET(request, { params }) {
   return Response.json(profile, { status: 200 });
 }
 
-export async function PATCH(request, { params }) {
+export async function PUT(request, { params }) {
   const updates = await request.json();
-  const { id } = params;
+  const { id } = await params;
+  
+  try{
+    if(!newProfile.name || newProfile.name.trim() === ""){
+      return Response.json({error: "Name is required"}, {status: 400});
 
-  const index = profiles.findIndex((profile) => profile.id === Number(id));
+    }else if(!newProfile.major || newProfile.major.trim() === ""){
+      return Response.json({error: "Major is required"}, {status: 400});
 
-  if (index === -1) {
-    return Response.json({ error: "Profile not found" }, { status: 200 });
+    }else if(!newProfile.year || isNaN(newProfile.year) || (newProfile.year < 1 || newProfile.year > 4)){
+      return Response.json({error: "Valid year is required"}, {status: 400});
+
+    }else if(!newProfile.gpa || isNaN(newProfile.gpa) || (newProfile.gpa < 0 || newProfile.gpa > 4)){
+      return Response.json({error: "Valid GPA is required"}, {status: 400});
+    }
+      const index = profiles.findIndex(profile => profile.id === parseInt(id));
+
+      if(index === -1){
+        return Response.json({error: "Profile not found"}, {status: 404});
+      }
+
+      profiles[index] = {
+        ...profiles[index],
+        ...newProfile,
+        id: profiles[index].id
+      };
+      return Response.json(profiles[index], {status: 200});
+  }catch(error){
+    return Response.json({error: "Invalid data format"}, {status: 400});
   }
-
-  // TODO: add validation for year or gpa before updating
-  profiles[index] = {
-    ...profiles[index],
-    ...updates,
-    id: updates.id,
-  };
-
-  return Response.json(profiles[index], { status: 201 });
 }
