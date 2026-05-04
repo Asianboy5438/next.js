@@ -8,29 +8,25 @@ async function fetchProfile(id) {
   });
   return data ? data : null;
 }
-
 export async function generateMetadata({ params }) {
-  const { id } = params;
-  return {
+  const { id } = await params;
+  return {  
     title: `Edit Profile ${id}`,
     description: `Edit details of profile with ID ${id}`,
   };
-}
-
+};
 export default async function ProfilePage({ params }) {
-  const { id } = params;
+  const { id } = await params;
+  console.log("Profile ID:", id);
   const profile = await fetchProfile(id);
-
   if (!profile) {
     return <p>Profile not found.</p>;
   }
-
   return (
     <div>
-      <h1>Edit Profile: {profile.name}</h1>
-      {/* ✅ TODO fixed: pass the existing profile data into the reusable form */}
-      <AddProfileForm existingProfile={profile} />
-      <DeleteButton profileId={profile.id} />
+      <h1>Edit Profile {profile.name}</h1>
+        <AddProfileForm existingProfile={profile} />
+        <DeleteButton profileId={profile.id} />
     </div>
   );
 }
