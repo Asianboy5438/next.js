@@ -41,7 +41,7 @@ export default function AddProfile({ existingProfile = {} }) {
     const { name, value, files } = e.target;
     if (name === "img") {
       const file = files[0];
-      if (file && file.size < 1024 * 1024) {
+      if (file && file.size <= 2 * 1024 * 1024) {
         setValues((prev) => ({ ...prev, img: files[0] }));
         setErrors("");
       } else {
