@@ -7,14 +7,15 @@ export const dynamic = 'force-dynamic';
 // GET single profile by ID
 export async function GET(request, { params }) {
     try {
-        const { id } = params;
-        const profileId = parseInt(id);
+        // TODO: get the id from params and convert it to a number
+        const { id } = await params;
+        const profileId = Number.parseInt(id, 10);
 
         if (isNaN(profileId)) {
             return Response.json({ error: 'Invalid profile ID' }, { status: 400 });
         }
 
-        // ✅ TODO fixed: find the matching profile by id
+        // TODO: find the matching profile by id
         const profile = await prisma.profiles.findUnique({
             where: { id: profileId },
         });
@@ -33,9 +34,10 @@ export async function GET(request, { params }) {
 // PUT - Update profile by ID
 export async function PUT(request, { params }) {
     try {
-        const { id } = params;
-        const profileId = parseInt(id);
-
+        // TODO: get the id from params and convert it to a number
+    const { id } = await params;
+    const profileId = Number.parseInt(id, 10);
+console.log("Updating profile with ID:", isNaN(profileId));
         if (isNaN(profileId)) {
             return Response.json({ error: 'Invalid profile ID' }, { status: 400 });
         }
@@ -46,7 +48,6 @@ export async function PUT(request, { params }) {
         const email = formData.get('email');
         const bio = formData.get('bio');
         const imgFile = formData.get('img');
-        // ✅ TODO fixed: get the existing image URL from formData
         const existingImageUrl = formData.get('image_url');
 
         if (!name || name.trim() === '') {
@@ -68,13 +69,15 @@ export async function PUT(request, { params }) {
             if (imgFile.size > 1024 * 1024) {
                 return Response.json({ error: 'Image must be less than 1MB' }, { status: 400 });
             }
+
             const blob = await put(imgFile.name, imgFile, {
                 access: 'public',
             });
+
             imageUrl = blob.url;
         }
 
-        // ✅ TODO fixed: update the matching profile in the database
+        // TODO: update the matching profile in the database
         const updated = await prisma.profiles.update({
             where: { id: profileId },
             data: {
@@ -89,12 +92,14 @@ export async function PUT(request, { params }) {
         return Response.json({ data: updated }, { status: 200 });
     } catch (error) {
         console.error('Error updating profile:', error);
+
         if (error.code === 'P2002') {
             return Response.json({ error: 'Email already exists' }, { status: 400 });
         }
         if (error.code === 'P2025') {
             return Response.json({ error: 'Profile not found' }, { status: 404 });
         }
+
         return Response.json({ error: 'Failed to update profile' }, { status: 500 });
     }
 }
@@ -102,13 +107,15 @@ export async function PUT(request, { params }) {
 // DELETE profile by ID
 export async function DELETE(request, { params }) {
     try {
-        const { id } = params;
-        const profileId = parseInt(id);
+        // TODO: get the id from params and convert it to a number
+        const { id } = await params;
+        const profileId = Number.parseInt(id, 10);
 
         if (isNaN(profileId)) {
             return Response.json({ error: 'Invalid profile ID' }, { status: 400 });
         }
 
+        // TODO: delete the matching profile by id
         await prisma.profiles.delete({
             where: { id: profileId },
         });
@@ -116,9 +123,11 @@ export async function DELETE(request, { params }) {
         return Response.json({ message: 'Profile deleted successfully' }, { status: 200 });
     } catch (error) {
         console.error('Error deleting profile:', error);
+
         if (error.code === 'P2025') {
             return Response.json({ error: 'Profile not found' }, { status: 404 });
         }
+
         return Response.json({ error: 'Failed to delete profile' }, { status: 500 });
     }
 }
