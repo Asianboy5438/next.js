@@ -1,0 +1,63 @@
+.addProfile {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.addProfile form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.addProfile label {
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.addProfile input,
+.addProfile textarea {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.addProfile textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.addProfile button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.25rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.addProfile button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.addProfile button:hover:not(:disabled) {
+  background-color: #005bb5;
+}
+
+.errorMessage {
+  color: #cc0000;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.successMessage {
+  color: #007700;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
