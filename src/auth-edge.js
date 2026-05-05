@@ -1,7 +1,9 @@
-// Lightweight version of auth.js for Edge Runtime (proxy.js)
+// Lightweight version for Edge Runtime (proxy.js)
 // Cannot import prisma or bcrypt — Node.js only modules
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 
 export const { auth } = NextAuth({
   providers: [
@@ -11,10 +13,11 @@ export const { auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize() {
-        // authorize() never runs in edge — only callbacks run here
         return null;
       },
     }),
+    GitHub,
+    Google,
   ],
   callbacks: {
     async jwt({ token, user }) {

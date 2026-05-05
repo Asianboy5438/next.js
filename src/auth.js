@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 import prisma from "@/app/lib/prisma";
 import bcrypt from "bcryptjs";
 
@@ -29,6 +31,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return { id: String(user.id), email: user.email, name: user.name };
       },
     }),
+    GitHub,   // ✅ reads AUTH_GITHUB_ID and AUTH_GITHUB_SECRET automatically
+    Google,   // ✅ reads AUTH_GOOGLE_ID and AUTH_GOOGLE_SECRET automatically
   ],
   callbacks: {
     async jwt({ token, user }) {
